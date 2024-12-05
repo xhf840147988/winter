@@ -12,14 +12,19 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class MyAccessibilityService : AccessibilityService() {
     private var clickJob: Job? = null
-    private val binder = LocalBinder()
 
-    inner class LocalBinder : Binder() {
-        fun getService(): MyAccessibilityService = this@MyAccessibilityService
+    override fun onCreate() {
+        super.onCreate()
+        EventBus.getDefault().register(this)
     }
+
+
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         // 可以根据需要处理辅助功能事件
         Log.e("xhf", "onAccessibilityEvent: $event")
@@ -29,7 +34,7 @@ class MyAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.e("xhf", "服务已连接:")
-        startClickLoop()
+//        startClickLoop()
     }
 
     private fun startClickLoop() {
@@ -37,9 +42,8 @@ class MyAccessibilityService : AccessibilityService() {
             while (true) {
                 if (FloatWindowManager.getSwitchState()) {
                     // 执行点击
-                    Log.e("xhf", "执行点击:")
                     //首页互助的小图标
-                    performClick(803, 2116)
+//                    performClick(803, 2116)
                     //联盟里的互助
 //                    performClick(532, 2229)
                 }
@@ -48,14 +52,21 @@ class MyAccessibilityService : AccessibilityService() {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onClickEvent(event: ClickEvent) {
+        Log.e("xhf", "执行点击:$event")
+        performClick(event.x, event.y)
+    }
+
     override fun onInterrupt() {
     }
 
     override fun onDestroy() {
         super.onDestroy()
         clickJob?.cancel()
+        EventBus.getDefault().unregister(this)
     }
-    fun performClick(x: Int, y: Int) {
+    private fun performClick(x: Int, y: Int) {
         val path = Path()
         path.moveTo(x.toFloat(), y.toFloat())
 

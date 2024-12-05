@@ -1,9 +1,6 @@
 package com.xhf.winter
 
 import android.app.Activity
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
 import android.content.ComponentName
 import android.content.Context
@@ -18,17 +15,14 @@ import android.media.Image
 import android.media.ImageReader
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
-import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -44,19 +38,7 @@ class ScreenCaptureService : Service() {
     private var screenDensity: Int = 0
     private var isCapturing = false
     private val scope = CoroutineScope(Dispatchers.IO + Job())
-    private var accessibilityService: MyAccessibilityService? = null
 
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (service is MyAccessibilityService.LocalBinder) {
-                accessibilityService = service.getService()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            accessibilityService = null
-        }
-    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -69,8 +51,6 @@ class ScreenCaptureService : Service() {
         NotificationUtils.createNotificationChannel(this)
         startForeground(NOTIFICATION_ID, NotificationUtils.createNotification(this))
         initScreenInfo()
-        val intent = Intent(this, MyAccessibilityService::class.java)
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -106,8 +86,10 @@ class ScreenCaptureService : Service() {
         scope.launch {
             while (isCapturing) {
                 try {
-                    captureScreen()
-                    delay(1000) // 延迟1秒
+                    if(FloatWindowManager.getSwitchState()){
+                        captureScreen()
+                        delay(1000) // 延迟1秒
+                    }
                 } catch (e: Exception) {
                     Log.e("ScreenCapture", "Error capturing screen", e)
                 }
@@ -130,17 +112,19 @@ class ScreenCaptureService : Service() {
                 true
             )
             val huzhu = BitmapFactory.decodeResource(resources, R.drawable.huzhu)
-            val value = SIFTUtils.similarity(huzhu, regionBitmap)
+            val value = SIFTUtils.similarity(regionBitmap, huzhu)
             Log.e("xhf", "互助 对比值$value")
-//            accessibilityService?.performClick(803, 2116)
+            if (value > 0.4) {
+                Log.e("xhf", "点击")
+                EventBus.getDefault().post(ClickEvent(803, 2116))
+            }
 //            saveScreenshot(regionBitmap,"regionBitmap")
+
+            fullBitmap.recycle()
+            regionBitmap.recycle()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unbindService(serviceConnection)
-    }
 
     private fun createVirtualDisplay() {
         imageReader = ImageReader.newInstance(
