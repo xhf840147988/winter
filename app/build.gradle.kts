@@ -23,6 +23,7 @@ android {
         }
     }
 
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.opencv.quickbirdstudios)
     implementation(libs.eventbus)
+//    implementation(libs.text.recognition.chinese)
 //    implementation(libs.opencv.contrib.quickbirdstudios)
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)

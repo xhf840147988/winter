@@ -11,6 +11,7 @@ composeBom = "2023.08.00"
 opencv = "4.5.3.0"
 coroutines = "1.7.3"
 eventbus = "3.3.1"
+recognition = "16.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,7 +30,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 opencv-quickbirdstudios = { group = "com.quickbirdstudios", name = "opencv", version.ref = "opencv" }
 eventbus = { group = "org.greenrobot", name = "eventbus", version.ref = "eventbus" }
-opencv-contrib-quickbirdstudios = { group = "com.quickbirdstudios", name = "opencv-contrib", version.ref = "opencv" }
+text-recognition-chinese = { group = "com.google.mlkit", name = "text-recognition-chinese", version.ref = "recognition" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
 [plugins]

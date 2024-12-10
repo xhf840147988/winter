@@ -33,6 +33,7 @@ class ScreenCaptureService : Service() {
     private var mediaProjection: MediaProjection? = null
     private var imageReader: ImageReader? = null
     private var virtualDisplay: VirtualDisplay? = null
+//    private var textRecognitionManager = TextRecognitionManager(this)
     private var screenWidth: Int = 0
     private var screenHeight: Int = 0
     private var screenDensity: Int = 0
@@ -88,7 +89,7 @@ class ScreenCaptureService : Service() {
                 try {
                     if(FloatWindowManager.getSwitchState()){
                         captureScreen()
-                        delay(1000) // 延迟1秒
+                        delay(600) // 延迟1秒
                     }
                 } catch (e: Exception) {
                     Log.e("ScreenCapture", "Error capturing screen", e)
@@ -100,7 +101,6 @@ class ScreenCaptureService : Service() {
     private fun captureScreen() {
         imageReader?.acquireLatestImage()?.use { image ->
             val fullBitmap = imageToBitmap(image)
-//            saveScreenshot(fullBitmap,"fullBitmap")
             //互助
             val regionBitmap = Bitmap.createBitmap(
                 fullBitmap,
@@ -111,17 +111,28 @@ class ScreenCaptureService : Service() {
                 null,
                 true
             )
+            //行军
+            val xingjunBitmap = Bitmap.createBitmap(
+                fullBitmap,
+                310,
+                392,
+                60,
+                32,
+                null,
+                true
+            )
             val huzhu = BitmapFactory.decodeResource(resources, R.drawable.huzhu)
+//            textRecognitionManager.processImageForText(xingjunBitmap) { text ->
+//                Log.e("xhf", "text $text")
+//            }
             val value = SIFTUtils.similarity(regionBitmap, huzhu)
             Log.e("xhf", "互助 对比值$value")
             if (value > 0.4) {
-                Log.e("xhf", "点击")
                 EventBus.getDefault().post(ClickEvent(803, 2116))
             }
-//            saveScreenshot(regionBitmap,"regionBitmap")
-
             fullBitmap.recycle()
             regionBitmap.recycle()
+            huzhu.recycle()
         }
     }
 
