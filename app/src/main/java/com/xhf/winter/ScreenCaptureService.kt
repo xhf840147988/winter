@@ -28,12 +28,13 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.random.Random
 
 class ScreenCaptureService : Service() {
     private var mediaProjection: MediaProjection? = null
     private var imageReader: ImageReader? = null
     private var virtualDisplay: VirtualDisplay? = null
-//    private var textRecognitionManager = TextRecognitionManager(this)
+    private var textRecognitionManager = TextRecognitionManager(this)
     private var screenWidth: Int = 0
     private var screenHeight: Int = 0
     private var screenDensity: Int = 0
@@ -102,37 +103,40 @@ class ScreenCaptureService : Service() {
         imageReader?.acquireLatestImage()?.use { image ->
             val fullBitmap = imageToBitmap(image)
             //互助
-            val regionBitmap = Bitmap.createBitmap(
+//            val regionBitmap = Bitmap.createBitmap(
+//                fullBitmap,
+//                728,
+//                1965,
+//                126,
+//                126,
+//                null,
+//                true
+//            )
+            //治疗
+            val zhiLiao = Bitmap.createBitmap(
                 fullBitmap,
-                728,
-                1965,
-                126,
-                126,
+                635,
+                1680,
+                285,
+                128,
                 null,
                 true
             )
-            //行军
-            val xingjunBitmap = Bitmap.createBitmap(
-                fullBitmap,
-                310,
-                392,
-                60,
-                32,
-                null,
-                true
-            )
-            val huzhu = BitmapFactory.decodeResource(resources, R.drawable.huzhu)
-//            textRecognitionManager.processImageForText(xingjunBitmap) { text ->
-//                Log.e("xhf", "text $text")
-//            }
-            val value = SIFTUtils.similarity(regionBitmap, huzhu)
-            Log.e("xhf", "互助 对比值$value")
-            if (value > 0.4) {
-                EventBus.getDefault().post(ClickEvent(803, 2116))
+            textRecognitionManager.processImageForText(zhiLiao) { text ->
+                Log.e("xhf", "text $text")
+                if(text.contains("治疗")||text.contains("联盟互助")){
+                    EventBus.getDefault().post(ClickEvent(Random.nextInt(680, 880), Random.nextInt(1780, 1865)))
+                }
             }
+//            val huzhu = BitmapFactory.decodeResource(resources, R.drawable.huzhu)
+//            val value = SIFTUtils.similarity(regionBitmap, huzhu)
+//            Log.e("xhf", "对比值$value")
+//            if (value > 0.4) {
+//                EventBus.getDefault().post(ClickEvent(803, 2116))
+//            }
             fullBitmap.recycle()
-            regionBitmap.recycle()
-            huzhu.recycle()
+//            regionBitmap.recycle()
+//            huzhu.recycle()
         }
     }
 
