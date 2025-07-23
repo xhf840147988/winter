@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.random.Random
 
 class MyAccessibilityService : AccessibilityService() {
     private var clickJob: Job? = null
@@ -34,20 +35,17 @@ class MyAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.e("xhf", "服务已连接:")
-//        startClickLoop()
+        startClickLoop()
     }
 
     private fun startClickLoop() {
         clickJob = CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 if (FloatWindowManager.getSwitchState()) {
-                    // 执行点击
-                    //首页互助的小图标
-//                    performClick(803, 2116)
-                    //联盟里的互助
-//                    performClick(532, 2229)
+                    performClick(Random.nextInt(660, 850), Random.nextInt(2220, 2250))
+
                 }
-                delay(2000) // 延迟2秒
+                delay(200)
             }
         }
     }

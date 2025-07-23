@@ -74,7 +74,7 @@ class FloatingWindowService : Service() {
 
         // 创建文本视图
         val textView = TextView(this).apply {
-            text = "联盟互助"
+            text = "连点助手"
             setTextColor(Color.WHITE)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,

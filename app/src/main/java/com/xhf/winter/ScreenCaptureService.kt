@@ -100,44 +100,7 @@ class ScreenCaptureService : Service() {
     }
 
     private fun captureScreen() {
-        imageReader?.acquireLatestImage()?.use { image ->
-            val fullBitmap = imageToBitmap(image)
-            //互助
-//            val regionBitmap = Bitmap.createBitmap(
-//                fullBitmap,
-//                728,
-//                1965,
-//                126,
-//                126,
-//                null,
-//                true
-//            )
-            //治疗
-            val zhiLiao = Bitmap.createBitmap(
-                fullBitmap,
-                635,
-                1680,
-                285,
-                128,
-                null,
-                true
-            )
-            textRecognitionManager.processImageForText(zhiLiao) { text ->
-                Log.e("xhf", "text $text")
-                if(text.contains("治疗")||text.contains("联盟互助")){
-                    EventBus.getDefault().post(ClickEvent(Random.nextInt(680, 880), Random.nextInt(1780, 1865)))
-                }
-            }
-//            val huzhu = BitmapFactory.decodeResource(resources, R.drawable.huzhu)
-//            val value = SIFTUtils.similarity(regionBitmap, huzhu)
-//            Log.e("xhf", "对比值$value")
-//            if (value > 0.4) {
-//                EventBus.getDefault().post(ClickEvent(803, 2116))
-//            }
-            fullBitmap.recycle()
-//            regionBitmap.recycle()
-//            huzhu.recycle()
-        }
+        EventBus.getDefault().post(ClickEvent(Random.nextInt(660, 850), Random.nextInt(2220, 2250)))
     }
 
 

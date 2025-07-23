@@ -98,9 +98,9 @@ class MainActivity : ComponentActivity() {
 
     private fun startFloatingWindowService() {
         startService(Intent(this, FloatingWindowService::class.java))
-        if(OpenCVLoader.initDebug()){
-            requestScreenCapture()
-        }
+//        if(OpenCVLoader.initDebug()){
+//            requestScreenCapture()
+//        }
     }
     // 处理设置页面返回结果
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
